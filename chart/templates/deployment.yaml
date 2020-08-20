@@ -1,32 +1,42 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata: {{ $fullname := printf "%s-%s" .Release.Name .Chart.Name | trunc 63 | trimSuffix "-" }}
-  name: {{ $fullname }}
+metadata:
+  name: {{ .Chart.Name }}
   labels:
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app: {{ .Values.appName }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
 spec:
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ $fullname }}
-  replicas: {{ default 1 .Values.replicaCount | int }}
+      app: {{ .Values.appName }}
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ $fullname }}
+        app: {{ .Values.appName }}
+        release: {{ .Release.Name }}
     spec:
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
       containers:
-      - name: {{ .Chart.Name }}
-        image: "{{ .Values.image }}"
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: {{ .Values.service.internalPort | int }}
-        livenessProbe:
-          httpGet:
-            path: /
-            port: {{ .Values.service.internalPort | int }}
-        readinessProbe:
-          httpGet:
-            path: /
-            port: {{ .Values.service.internalPort | int }}
-        resources:
-{{ toYaml .Values.resources | indent 10 }}
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.internalPort }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.internalPort }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.internalPort }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}
