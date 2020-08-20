@@ -1,0 +1,3 @@
+image: alexjamesmalcolm/kubernetes-apache-proxy
+service:
+  internalPort: 80
