@@ -1,10 +1,10 @@
-appName: kubernetes-apache-proxy
+appName: kubernetes-api-proxy
 replicaCount: 1
 image:
-  repository: alexjamesmalcolm/kubernetes-apache-proxy
+  repository: alexjamesmalcolm/kubernetes-api-proxy
   pullPolicy: Always
 service:
-  name: kubernetes-apache-proxy
+  name: kubernetes-api-proxy
   type: NodePort
   internalPort: 80
   externalPort: 80
