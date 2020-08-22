@@ -2,7 +2,7 @@ appName: kubernetes-apache-proxy
 replicaCount: 1
 image:
   repository: alexjamesmalcolm/kubernetes-apache-proxy
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 service:
   name: kubernetes-apache-proxy
   type: NodePort
