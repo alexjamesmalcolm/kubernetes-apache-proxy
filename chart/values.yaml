@@ -2,6 +2,7 @@ appName: kubernetes-api-proxy
 replicaCount: 1
 image:
   repository: alexjamesmalcolm/kubernetes-api-proxy
+  tag: latest
   pullPolicy: Always
 service:
   name: kubernetes-api-proxy
